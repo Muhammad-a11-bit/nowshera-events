@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nowshera Events Co.</title>
+  <meta name="description" content="Event registration and management platform for Nowshera Events Co." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f7f8f5;--surface:#ffffff;--surface-2:#eef4ef;--text:#172019;
+      --muted:#657068;--line:#dfe6df;--brand:#16884b;--brand-dark:#0d6336;
+      --danger:#c63e3e;--warning:#a66b13;--shadow:0 16px 40px rgba(24,42,30,.08);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit;text-decoration:none}
+    .hidden{display:none!important}
+    .app{min-height:100vh}
+    .nav{position:sticky;top:0;z-index:20;background:rgba(247,248,245,.9);backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(223,230,223,.8)}
+    .nav-inner{max-width:1180px;margin:auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px;font-family:"Manrope",sans-serif;font-weight:800}
+    .brand-mark{width:38px;height:38px;border-radius:12px;background:var(--brand);display:grid;place-items:center;color:white;font-weight:800}
+    .nav-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .btn{border:0;border-radius:14px;padding:11px 16px;font-weight:700;transition:.2s ease}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--brand);color:white;box-shadow:0 8px 18px rgba(22,136,75,.22)}
+    .btn-secondary{background:white;border:1px solid var(--line);color:var(--text)}
+    .btn-danger{background:#fff0f0;color:var(--danger);border:1px solid #f2caca}
+    .btn-small{padding:8px 12px;border-radius:11px;font-size:14px}
+    .shell{max-width:1180px;margin:auto;padding:32px 24px 60px}
+    .hero{background:linear-gradient(135deg,#eef8ef,#ffffff);border:1px solid var(--line);border-radius:30px;
+      padding:48px;display:grid;grid-template-columns:1.2fr .8fr;gap:28px;box-shadow:var(--shadow);margin-bottom:30px;overflow:hidden;position:relative}
+    .hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(22,136,75,.08);right:-70px;top:-80px}
+    h1,h2,h3{font-family:"Manrope",sans-serif;margin:0}
+    h1{font-size:clamp(38px,5vw,66px);line-height:1.02;letter-spacing:-2px}
+    .hero p{font-size:18px;line-height:1.65;color:var(--muted);max-width:650px}
+    .hero-card{align-self:end;background:#173f2b;color:white;border-radius:24px;padding:24px;z-index:1}
+    .hero-card strong{font-size:30px;display:block;margin-bottom:4px}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:28px 0 18px}
+    .section-head p{margin:6px 0 0;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 8px 24px rgba(25,42,31,.04)}
+    .event-card{display:flex;flex-direction:column;gap:16px}
+    .event-top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+    .badge{display:inline-flex;padding:7px 10px;border-radius:999px;background:#edf7ef;color:var(--brand-dark);font-size:12px;font-weight:800;text-transform:capitalize}
+    .badge.draft{background:#f5f3e8;color:#8b6818}.badge.cancelled{background:#fdeaea;color:#a83232}.badge.completed{background:#edf0f4;color:#5f6670}
+    .event-meta{display:grid;gap:7px;color:var(--muted);font-size:14px}
+    .progress{height:8px;background:#e8eee9;border-radius:999px;overflow:hidden}
+    .progress span{display:block;height:100%;background:var(--brand)}
+    .event-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .panel{background:white;border:1px solid var(--line);border-radius:24px;padding:22px;margin-bottom:22px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+    .tab{background:white;border:1px solid var(--line);border-radius:999px;padding:10px 15px;font-weight:700;color:var(--muted)}
+    .tab.active{background:var(--text);color:white;border-color:var(--text)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .stat{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+    .stat span{color:var(--muted);font-size:13px}
+    .stat strong{display:block;font-family:"Manrope",sans-serif;font-size:30px;margin-top:6px}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .field{display:grid;gap:7px}
+    .field.full{grid-column:1/-1}
+    label{font-size:13px;font-weight:700;color:#4d5a51}
+    input,textarea,select{width:100%;border:1px solid var(--line);background:#fbfcfa;border-radius:13px;padding:12px 14px;outline:none}
+    input:focus,textarea:focus,select:focus{border-color:#73b891;box-shadow:0 0 0 4px rgba(22,136,75,.08)}
+    textarea{min-height:110px;resize:vertical}
+    table{width:100%;border-collapse:collapse}
+    th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line);font-size:14px}
+    th{color:var(--muted);font-weight:700}
+    .table-wrap{overflow:auto}
+    .empty{text-align:center;padding:38px;color:var(--muted)}
+    .modal{position:fixed;inset:0;background:rgba(18,27,20,.46);display:grid;place-items:center;padding:20px;z-index:50}
+    .modal-card{width:min(560px,100%);max-height:90vh;overflow:auto;background:white;border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .close{background:#f0f3f0;border:0;border-radius:10px;width:36px;height:36px}
+    .toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#172019;color:white;border-radius:14px;padding:14px 18px;box-shadow:var(--shadow);max-width:340px}
+    .toast.error{background:#8f2929}
+    .auth-box{max-width:460px;margin:60px auto;background:white;border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:var(--shadow)}
+    .auth-box p{color:var(--muted)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .search{max-width:320px}
+    .muted{color:var(--muted)}
+    .footer{text-align:center;color:var(--muted);font-size:13px;padding:30px}
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;padding:32px}.grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:620px){
+      .nav-inner,.shell{padding-left:16px;padding-right:16px}.hero{padding:24px;border-radius:22px}.grid,.stats,.form-grid{grid-template-columns:1fr}
+      .field.full{grid-column:auto}.nav-actions .btn-secondary.nav-hide-mobile{display:none}.section-head{align-items:start;flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand" onclick="showView('home')" style="cursor:pointer">
+        <div class="brand-mark">N</div>
+        <span>Nowshera Events Co.</span>
+      </div>
+      <div class="nav-actions" id="navActions"></div>
+    </div>
+  </nav>
+
+  <main class="shell">
+    <section id="homeView">
+      <div class="hero">
+        <div>
+          <span class="badge">Community events, made simple</span>
+          <h1 style="margin-top:14px">Find your next event in Nowshera.</h1>
+          <p>Workshops, seminars and community gatherings — with clear seat availability and simple registration.</p>
+          <div class="event-actions">
+            <button class="btn btn-primary" onclick="document.getElementById('eventsSection').scrollIntoView({behavior:'smooth'})">Explore events</button>
+            <button class="btn btn-secondary" id="heroAccountBtn">My registrations</button>
+          </div>
+        </div>
+        <div class="hero-card">
+          <span style="opacity:.75">Upcoming published events</span>
+          <strong id="heroEventCount">0</strong>
+          <span style="opacity:.8">Live availability is updated from the database.</span>
+        </div>
+      </div>
+
+      <section id="eventsSection">
+        <div class="section-head">
+          <div>
+            <h2>Upcoming events</h2>
+            <p>Only published future events appear here.</p>
+          </div>
+        </div>
+        <div id="eventGrid" class="grid"></div>
+      </section>
+    </section>
+
+    <section id="authView" class="hidden">
+      <div class="auth-box">
+        <span class="badge">Welcome</span>
+        <h2 id="authTitle" style="margin-top:14px">Sign in</h2>
+        <p id="authSub">Access your registrations and events.</p>
+        <form id="authForm">
+          <div class="field hidden" id="nameField" style="margin-bottom:12px">
+            <label>Full name</label><input id="fullName" placeholder="Your name" />
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label>Email</label><input id="email" type="email" required placeholder="you@example.com" />
+          </div>
+          <div class="field" style="margin-bottom:18px">
+            <label>Password</label><input id="password" type="password" required minlength="6" placeholder="At least 6 characters" />
+          </div>
+          <button class="btn btn-primary" style="width:100%" id="authSubmit">Sign in</button>
+        </form>
+        <button class="btn btn-secondary" style="width:100%;margin-top:10px" id="authSwitch">Create an account</button>
+      </div>
+    </section>
+
+    <section id="myView" class="hidden">
+      <div class="section-head">
+        <div><h2>My registrations</h2><p>Your upcoming and cancelled reservations.</p></div>
+      </div>
+      <div id="myRegistrations" class="grid"></div>
+    </section>
+
+    <section id="adminView" class="hidden">
+      <div class="section-head">
+        <div><h2>Admin workspace</h2><p>Manage events, registrations and capacity.</p></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-admin-tab="dashboard">Dashboard</button>
+        <button class="tab" data-admin-tab="events">Events</button>
+        <button class="tab" data-admin-tab="attendees">Attendees</button>
+      </div>
+
+      <div id="adminDashboard">
+        <div class="stats" id="statsGrid"></div>
+      </div>
+
+      <div id="adminEvents" class="hidden">
+        <div class="toolbar">
+          <input class="search" id="adminEventSearch" placeholder="Search events..." />
+          <button class="btn btn-primary" onclick="openEventModal()">+ Create event</button>
+        </div>
+        <div id="adminEventGrid" class="grid"></div>
+      </div>
+
+      <div id="adminAttendees" class="hidden">
+        <div class="panel">
+          <div class="toolbar">
+            <select id="attendeeEventSelect" style="max-width:340px"></select>
+            <div class="event-actions">
+              <input class="search" id="attendeeSearch" placeholder="Search attendee..." />
+              <button class="btn btn-secondary btn-small" onclick="exportAttendees()">Export CSV</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Registered</th></tr></thead>
+              <tbody id="attendeeRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Nowshera Events Co. · Simple event management for real communities.</div>
+</div>
+
+<div id="eventModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="eventModalTitle">Create event</h3><button class="close" onclick="closeEventModal()">×</button></div>
+    <form id="eventForm" class="form-grid">
+      <input type="hidden" id="eventId">
+      <div class="field full"><label>Title</label><input id="eventTitle" required></div>
+      <div class="field full"><label>Description</label><textarea id="eventDescription"></textarea></div>
+      <div class="field"><label>Starts at</label><input id="eventStarts" type="datetime-local" required></div>
+      <div class="field"><label>Ends at</label><input id="eventEnds" type="datetime-local"></div>
+      <div class="field"><label>Location</label><input id="eventLocation" required></div>
+      <div class="field"><label>Capacity</label><input id="eventCapacity" type="number" min="1" required></div>
+      <div class="field full"><label>Status</label>
+        <select id="eventStatus">
+          <option value="draft">Draft</option><option value="published">Published</option>
+          <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="field full"><button class="btn btn-primary">Save event</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="detailModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head"><h3>Event details</h3><button class="close" onclick="closeDetailModal()">×</button></div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const fmtDate = value => new Date(value).toLocaleString([], {dateStyle:"medium", timeStyle:"short"});
+  const esc = s => String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
+  const toLocalInput = value => value ? new Date(new Date(value).getTime()-new Date(value).getTimezoneOffset()*60000).toISOString().slice(0,16) : "";
+
+  let currentUser = null;
+  let currentProfile = null;
+  let events = [];
+  let adminAttendees = [];
+  let authMode = "login";
+
+  async function api(path, options = {}, retry = true){
+    const config = {...options, credentials:"same-origin"};
+    config.headers = {"Content-Type":"application/json", ...(options.headers || {})};
+    let response = await fetch(path, config);
+
+    if(response.status === 401 && retry && !path.startsWith("/api/auth/")){
+      const refresh = await fetch("/api/auth/refresh", {method:"POST", credentials:"same-origin", headers:{"Content-Type":"application/json"}});
+      if(refresh.ok) return api(path, options, false);
+    }
+
+    let body = null;
+    try{ body = await response.json(); }catch(_){ }
+    if(!response.ok) throw new Error(body?.detail || body?.message || "Request failed");
+    return body;
+  }
+
+  function toast(message, error=false){
+    const el=$("toast"); el.textContent=message; el.className="toast"+(error?" error":"");
+    el.classList.remove("hidden"); setTimeout(()=>el.classList.add("hidden"),3200);
+  }
+
+  function showView(name){
+    ["homeView","authView","myView","adminView"].forEach(id=>$(id).classList.add("hidden"));
+    $(name+"View").classList.remove("hidden");
+    if(name==="home") loadEvents();
+    if(name==="my") loadMyRegistrations();
+    if(name==="admin") loadAdmin();
+  }
+  window.showView=showView;
+
+  async function restoreSession(){
+    try{
+      const data = await api("/api/auth/session", {}, false);
+      currentUser=data.user; currentProfile=data.profile;
+      return true;
+    }catch(_){
+      try{
+        await api("/api/auth/refresh", {method:"POST"}, false);
+        const data=await api("/api/auth/session", {}, false);
+        currentUser=data.user; currentProfile=data.profile;
+        return true;
+      }catch(_){
+        currentUser=null; currentProfile=null; return false;
+      }
+    }
+  }
+
+  async function init(){
+    await restoreSession();
+    renderNav();
+    await loadEvents();
+  }
+
+  function renderNav(){
+    const nav=$("navActions");
+    if(!currentUser){
+      nav.innerHTML=`<button class="btn btn-secondary nav-hide-mobile" onclick="showView('home')">Events</button>
+      <button class="btn btn-primary" onclick="openAuth('login')">Sign in</button>`;
+      $("heroAccountBtn").textContent="Sign in to register";
+      $("heroAccountBtn").onclick=()=>openAuth("login");
+      return;
+    }
+    nav.innerHTML=`
+      <button class="btn btn-secondary nav-hide-mobile" onclick="showView('home')">Events</button>
+      <button class="btn btn-secondary" onclick="showView('my')">My registrations</button>
+      ${currentProfile?.role==="admin"?`<button class="btn btn-secondary" onclick="showView('admin')">Admin</button>`:""}
+      <button class="btn btn-primary" id="signOutBtn">Sign out</button>`;
+    $("signOutBtn").onclick=signOut;
+    $("heroAccountBtn").textContent="My registrations";
+    $("heroAccountBtn").onclick=()=>showView("my");
+  }
+
+  window.openAuth=function(mode){ authMode=mode; showView("auth"); syncAuthUI(); };
+
+  function syncAuthUI(){
+    const signup=authMode==="signup";
+    $("authTitle").textContent=signup?"Create account":"Sign in";
+    $("authSub").textContent=signup?"Create your attendee account and start registering.":"Access your registrations and events.";
+    $("nameField").classList.toggle("hidden",!signup);
+    $("authSubmit").textContent=signup?"Create account":"Sign in";
+    $("authSwitch").textContent=signup?"Already have an account? Sign in":"Create an account";
+  }
+
+  $("authSwitch").onclick=()=>{authMode=authMode==="login"?"signup":"login";syncAuthUI()};
+
+  $("authForm").onsubmit=async e=>{
+    e.preventDefault();
+    const email=$("email").value.trim(), password=$("password").value;
+    try{
+      if(authMode==="signup"){
+        const result=await api("/api/auth/signup", {method:"POST", body:JSON.stringify({
+          full_name:$("fullName").value.trim(), email, password
+        })}, false);
+        if(result.authenticated){
+          await restoreSession(); renderNav(); showView("home"); toast("Account created. Welcome!");
+        }else{
+          toast("Account created. Check your email if confirmation is required, then sign in.");
+          authMode="login"; syncAuthUI();
+        }
+      }else{
+        await api("/api/auth/login", {method:"POST", body:JSON.stringify({email,password})}, false);
+        await restoreSession(); renderNav(); showView("home"); toast("Welcome back.");
+      }
+    }catch(error){
+      const msg=(error.message||"").toLowerCase();
+      if(msg.includes("rate limit")) return toast("Too many signup emails were requested. Please try again later.",true);
+      toast(error.message,true);
+    }
+  };
+
+  async function signOut(){
+    try{ await api("/api/auth/logout", {method:"POST"}, false); }catch(_){ }
+    currentUser=null; currentProfile=null; renderNav(); showView("home"); toast("Signed out.");
+  }
+
+  async function loadEvents(){
+    try{
+      events=(await api("/api/events/upcoming", {}, false))??[];
+      $("heroEventCount").textContent=events.length;
+      renderEvents();
+    }catch(error){
+      console.error(error);
+      $("eventGrid").innerHTML=`<div class="card">Could not load events. Please refresh and try again.</div>`;
+    }
+  }
+
+  function eventCard(e,admin=false){
+    const used=e.registered_count??0, remaining=e.remaining_capacity??Math.max(e.capacity-used,0);
+    const percent=Math.min(100,Math.round((used/e.capacity)*100));
+    return `<article class="card event-card">
+      <div class="event-top"><div><span class="badge ${e.status}">${esc(e.status)}</span><h3 style="margin-top:10px">${esc(e.title)}</h3></div></div>
+      <div class="event-meta"><span>📍 ${esc(e.location)}</span><span>🗓 ${fmtDate(e.starts_at)}</span><span>👥 ${remaining} of ${e.capacity} seats available</span></div>
+      <div><div class="progress"><span style="width:${percent}%"></span></div></div>
+      <div class="event-actions">
+        <button class="btn btn-secondary btn-small" onclick="openEventDetail('${e.id}')">View details</button>
+        ${admin
+          ? `<button class="btn btn-primary btn-small" onclick="editEvent('${e.id}')">Edit</button>`
+          : `<button class="btn btn-primary btn-small" ${remaining<=0?"disabled":""} onclick="registerEvent('${e.id}')">${remaining<=0?"Full":"Register"}</button>`}
+      </div>
+    </article>`;
+  }
+
+  function renderEvents(){
+    $("eventGrid").innerHTML=events.length?events.map(e=>eventCard(e)).join(""):`<div class="card empty">No upcoming published events yet.</div>`;
+  }
+
+  window.openEventDetail=async id=>{
+    const data=events.find(e=>e.id===id);
+    if(!data)return toast("Event is no longer available.",true);
+    $("detailBody").innerHTML=`
+      <span class="badge ${data.status}">${esc(data.status)}</span>
+      <h2 style="margin:14px 0 10px">${esc(data.title)}</h2>
+      <p class="muted" style="line-height:1.7">${esc(data.description)}</p>
+      <div class="event-meta" style="font-size:15px;margin:18px 0">
+        <span>📍 ${esc(data.location)}</span><span>🗓 ${fmtDate(data.starts_at)}</span>
+        <span>👥 ${data.remaining_capacity} of ${data.capacity} seats available</span>
+      </div>
+      ${currentProfile?.role!=="admin"?`<button class="btn btn-primary" onclick="registerEvent('${data.id}')">Reserve my seat</button>`:""}`;
+    $("detailModal").classList.remove("hidden");
+  };
+  window.closeDetailModal=()=> $("detailModal").classList.add("hidden");
+
+  window.registerEvent=async eventId=>{
+    if(!currentUser)return openAuth("login");
+    if(currentProfile?.role==="admin")return toast("Admins manage events instead of registering.",true);
+    try{
+      await api(`/api/events/${eventId}/register`,{method:"POST"});
+      toast("Your seat is reserved."); closeDetailModal(); await loadEvents();
+    }catch(error){ toast(error.message,true); }
+  };
+
+  async function loadMyRegistrations(){
+    if(!currentUser)return openAuth("login");
+    try{
+      const data=await api("/api/registrations/me");
+      $("myRegistrations").innerHTML=(data??[]).length?(data??[]).map(r=>`
+        <div class="card event-card">
+          <div class="event-top"><h3>${esc(r.events?.title??"Event")}</h3><span class="badge ${r.status}">${esc(r.status)}</span></div>
+          <div class="event-meta"><span>📍 ${esc(r.events?.location??"")}</span><span>🗓 ${r.events?.starts_at?fmtDate(r.events.starts_at):""}</span></div>
+          ${r.status==="active"?`<button class="btn btn-danger btn-small" onclick="cancelRegistration('${r.id}')">Cancel registration</button>`:""}
+        </div>`).join(""):`<div class="card empty">You do not have any registrations yet.</div>`;
+    }catch(error){ toast(error.message,true); }
+  }
+
+  window.cancelRegistration=async id=>{
+    if(!confirm("Cancel this registration?"))return;
+    try{
+      await api(`/api/registrations/${id}/cancel`,{method:"POST"});
+      toast("Registration cancelled."); await loadMyRegistrations(); await loadEvents();
+    }catch(error){ toast(error.message,true); }
+  };
+
+  async function loadAdmin(){
+    if(currentProfile?.role!=="admin"){showView("home");return toast("Admin access required.",true)}
+    await Promise.all([loadAdminStats(),loadAdminEvents()]);
+  }
+
+  async function loadAdminStats(){
+    try{
+      const data=await api("/api/admin/stats");
+      const d=data?.[0]??{};
+      const items=[["Total events",d.total_events??0],["Published",d.published_events??0],["Active registrations",d.active_registrations??0],["Remaining seats",d.remaining_capacity??0]];
+      $("statsGrid").innerHTML=items.map(([k,v])=>`<div class="stat"><span>${k}</span><strong>${v}</strong></div>`).join("");
+    }catch(error){ toast(error.message,true); }
+  }
+
+  async function loadAdminEvents(){
+    try{
+      window.adminEventsData=(await api("/api/admin/events"))??[];
+      renderAdminEvents(); fillAttendeeSelect();
+    }catch(error){ toast(error.message,true); }
+  }
+
+  function renderAdminEvents(){
+    const q=$("adminEventSearch").value.toLowerCase();
+    const list=(window.adminEventsData??[]).filter(e=>(e.title+" "+e.location).toLowerCase().includes(q));
+    $("adminEventGrid").innerHTML=list.length?list.map(e=>eventCard(e,true)).join(""):`<div class="card empty">No matching events.</div>`;
+  }
+  $("adminEventSearch").oninput=renderAdminEvents;
+
+  document.querySelectorAll("[data-admin-tab]").forEach(btn=>{
+    btn.onclick=async()=>{
+      document.querySelectorAll("[data-admin-tab]").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
+      ["adminDashboard","adminEvents","adminAttendees"].forEach(id=>$(id).classList.add("hidden"));
+      const tab=btn.dataset.adminTab;
+      $("admin"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.remove("hidden");
+      if(tab==="attendees")await loadAttendees();
+    };
+  });
+
+  window.openEventModal=function(){
+    $("eventModalTitle").textContent="Create event"; $("eventForm").reset(); $("eventId").value="";
+    $("eventStatus").value="draft"; $("eventModal").classList.remove("hidden");
+  };
+  window.closeEventModal=()=> $("eventModal").classList.add("hidden");
+
+  window.editEvent=async id=>{
+    const e=(window.adminEventsData??[]).find(x=>x.id===id); if(!e)return;
+    $("eventModalTitle").textContent="Edit event"; $("eventId").value=e.id; $("eventTitle").value=e.title;
+    $("eventDescription").value=e.description??""; $("eventStarts").value=toLocalInput(e.starts_at);
+    $("eventEnds").value=toLocalInput(e.ends_at); $("eventLocation").value=e.location;
+    $("eventCapacity").value=e.capacity; $("eventStatus").value=e.status; $("eventModal").classList.remove("hidden");
+  };
+
+  $("eventForm").onsubmit=async e=>{
+    e.preventDefault();
+    const id=$("eventId").value;
+    const payload={
+      title:$("eventTitle").value.trim(),description:$("eventDescription").value.trim(),
+      starts_at:new Date($("eventStarts").value).toISOString(),
+      ends_at:$("eventEnds").value?new Date($("eventEnds").value).toISOString():null,
+      location:$("eventLocation").value.trim(),capacity:Number($("eventCapacity").value),status:$("eventStatus").value
+    };
+    try{
+      if(id) await api(`/api/admin/events/${id}`,{method:"PATCH",body:JSON.stringify(payload)});
+      else await api("/api/admin/events",{method:"POST",body:JSON.stringify(payload)});
+      closeEventModal(); toast(id?"Event updated.":"Event created."); await loadAdmin(); await loadEvents();
+    }catch(error){ toast(error.message,true); }
+  };
+
+  function fillAttendeeSelect(){
+    const list=window.adminEventsData??[];
+    $("attendeeEventSelect").innerHTML=list.map(e=>`<option value="${e.id}">${esc(e.title)}</option>`).join("");
+  }
+  $("attendeeEventSelect").onchange=loadAttendees;
+  $("attendeeSearch").oninput=renderAttendeeRows;
+
+  async function loadAttendees(){
+    const eventId=$("attendeeEventSelect").value;
+    if(!eventId){adminAttendees=[];renderAttendeeRows();return}
+    try{ adminAttendees=(await api(`/api/admin/events/${eventId}/attendees`))??[]; renderAttendeeRows(); }
+    catch(error){ toast(error.message,true); }
+  }
+
+  function renderAttendeeRows(){
+    const q=$("attendeeSearch").value.toLowerCase();
+    const list=adminAttendees.filter(a=>(a.full_name+" "+a.email).toLowerCase().includes(q));
+    $("attendeeRows").innerHTML=list.length?list.map(a=>`<tr>
+      <td>${esc(a.full_name||"—")}</td><td>${esc(a.email||"—")}</td>
+      <td><span class="badge ${a.registration_status}">${esc(a.registration_status)}</span></td>
+      <td>${fmtDate(a.registered_at)}</td></tr>`).join(""):`<tr><td colspan="4" class="empty">No attendees found.</td></tr>`;
+  }
+
+  window.exportAttendees=function(){
+    if(!adminAttendees.length)return toast("No attendee data to export.",true);
+    const rows=[["Name","Email","Status","Registered At"],...adminAttendees.map(a=>[a.full_name??"",a.email??"",a.registration_status??"",a.registered_at??""])];
+    const csv=rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+    const blob=new Blob([csv],{type:"text/csv"}), url=URL.createObjectURL(blob), a=document.createElement("a");
+    a.href=url;a.download="attendees.csv";a.click();URL.revokeObjectURL(url);
+  };
+
+  init();
+  setInterval(()=>{ if(!$("homeView").classList.contains("hidden")) loadEvents(); }, 20000);
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden && !$("homeView").classList.contains("hidden")) loadEvents(); });
+</script>
+</body>
+</html>

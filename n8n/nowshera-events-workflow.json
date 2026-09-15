@@ -1,0 +1,201 @@
+{
+  "name": "Nowshera Events - Registration Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nowshera-events-register",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "f346183b-62cf-4f8a-8de0-1f07570e8ca1",
+      "name": "Register Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -620,
+        -140
+      ],
+      "webhookId": "0f26a3e0-d087-4e9d-a0e0-7ce2cfe25d65"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://eruckjqpsivymppgghpe.supabase.co/rest/v1/rpc/register_for_event",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sb_publishable_iInvO6u3FJXoDno2645DSw_cXIgiEYq"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$json.body.access_token}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ p_event_id: $json.body.event_id }) }}",
+        "options": {}
+      },
+      "id": "b1d7ac61-4153-46a2-a0f8-3ec9c0a0a25a",
+      "name": "Safe Register in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -340,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, action: 'register', data: $json } }}",
+        "options": {}
+      },
+      "id": "994f89ca-f16d-4aef-8db7-727c6fb7a2d1",
+      "name": "Registration Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -60,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nowshera-events-cancel",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "bf9ff29d-c514-4aa8-b24a-9f8a103141ba",
+      "name": "Cancel Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -620,
+        160
+      ],
+      "webhookId": "404b51bc-2bf2-4d7f-b92c-2de34bcc7fa1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://eruckjqpsivymppgghpe.supabase.co/rest/v1/rpc/cancel_my_registration",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sb_publishable_iInvO6u3FJXoDno2645DSw_cXIgiEYq"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$json.body.access_token}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ p_registration_id: $json.body.registration_id }) }}",
+        "options": {}
+      },
+      "id": "a509d7b7-caa0-43b9-a2c8-1bcc52b5d2b0",
+      "name": "Safe Cancel in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -340,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, action: 'cancel', data: $json } }}",
+        "options": {}
+      },
+      "id": "8d3adfe9-1a97-4118-bd7d-852d28dd271f",
+      "name": "Cancellation Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -60,
+        160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Register Webhook": {
+      "main": [
+        [
+          {
+            "node": "Safe Register in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safe Register in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Registration Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel Webhook": {
+      "main": [
+        [
+          {
+            "node": "Safe Cancel in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safe Cancel in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Cancellation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c12458cc-67c3-4b72-a890-12b2a767239e",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

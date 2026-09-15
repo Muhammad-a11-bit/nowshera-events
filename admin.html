@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nowshera Events Co. — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f5f7f4;--panel:#fff;--text:#162018;--muted:#6a746d;--line:#dfe6df;
+      --brand:#16884b;--brand-dark:#0f6a3b;--danger:#b83a3a;--shadow:0 14px 36px rgba(22,32,24,.07)
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}
+    .layout{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+    aside{background:#13231a;color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;align-items:center;gap:12px;font-family:"Manrope",sans-serif;font-weight:800;margin-bottom:34px}
+    .mark{width:40px;height:40px;border-radius:12px;background:var(--brand);display:grid;place-items:center}
+    .navbtn{width:100%;border:0;background:transparent;color:#c9d4cc;text-align:left;padding:12px 14px;border-radius:12px;margin-bottom:7px;font-weight:700}
+    .navbtn:hover,.navbtn.active{background:#203629;color:#fff}
+    .sidebar-bottom{position:absolute;left:18px;right:18px;bottom:20px}
+    main{padding:28px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
+    h1,h2,h3{font-family:"Manrope",sans-serif;margin:0}
+    h1{font-size:32px}
+    .muted{color:var(--muted)}
+    .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:700}
+    .btn-primary{background:var(--brand);color:#fff}
+    .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--text)}
+    .btn-danger{background:#fff0f0;color:var(--danger);border:1px solid #f0cccc}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .stat,.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+    .stat{padding:20px}
+    .stat span{font-size:13px;color:var(--muted)}
+    .stat strong{display:block;font-size:30px;font-family:"Manrope",sans-serif;margin-top:8px}
+    .panel{padding:20px;margin-top:20px}
+    .toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+    input,textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:#fbfcfa;outline:none}
+    input:focus,textarea:focus,select:focus{border-color:#71b58f;box-shadow:0 0 0 4px rgba(22,136,75,.08)}
+    .search{max-width:320px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{padding:18px}
+    .badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:#edf7ef;color:var(--brand-dark);font-size:12px;font-weight:800;text-transform:capitalize}
+    .badge.draft{background:#f6f1df;color:#8c6818}.badge.cancelled{background:#fdeaea;color:#a12f2f}.badge.completed{background:#eef1f4;color:#59616a}
+    .meta{display:grid;gap:6px;color:var(--muted);font-size:14px;margin:14px 0}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse}
+    th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line);font-size:14px}
+    th{color:var(--muted)}
+    .modal{position:fixed;inset:0;background:rgba(12,22,15,.46);display:grid;place-items:center;padding:18px;z-index:50}
+    .modal-card{width:min(620px,100%);background:white;border-radius:20px;padding:22px;max-height:90vh;overflow:auto}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .close{width:36px;height:36px;border:0;border-radius:10px;background:#eef2ee}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+    .field{display:grid;gap:6px}.full{grid-column:1/-1}
+    label{font-size:13px;font-weight:700;color:#4d5750}
+    textarea{min-height:110px;resize:vertical}
+    .login{max-width:430px;margin:80px auto;background:white;border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:var(--shadow)}
+    .toast{position:fixed;right:20px;bottom:20px;background:#172019;color:#fff;padding:13px 16px;border-radius:12px;z-index:100}
+    .toast.error{background:#8d2f2f}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}aside{position:relative;height:auto}.sidebar-bottom{position:static;margin-top:20px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:620px){main{padding:18px}.stats,.grid,.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.topbar{align-items:flex-start;flex-direction:column}}
+    @media print{
+      aside,.topbar .btn,.navbtn,.actions button{display:none!important}
+      .layout{display:block}.panel,.stat{box-shadow:none}
+      body{background:#fff}main{padding:0}
+      #dashboardPage,#eventsPage,#attendeesPage{display:none!important}
+      #reportsPage{display:block!important}
+    }
+  </style>
+</head>
+<body>
+
+<div id="loginView" class="login">
+  <span class="badge">Admin access</span>
+  <h2 style="margin:14px 0 8px">Sign in to continue</h2>
+  <p class="muted">Only accounts with the admin role can enter this dashboard.</p>
+  <form id="loginForm">
+    <div class="field" style="margin-bottom:12px"><label>Email</label><input id="loginEmail" type="email" required></div>
+    <div class="field" style="margin-bottom:16px"><label>Password</label><input id="loginPassword" type="password" required></div>
+    <button class="btn btn-primary" style="width:100%">Sign in</button>
+  </form>
+</div>
+
+<div id="adminApp" class="layout hidden">
+  <aside>
+    <div class="brand"><div class="mark">N</div><span>Nowshera Admin</span></div>
+    <button class="navbtn active" data-page="dashboard">Dashboard</button>
+    <button class="navbtn" data-page="events">Events</button>
+    <button class="navbtn" data-page="attendees">Attendees</button>
+    <button class="navbtn" data-page="reports">Reports</button>
+    <div class="sidebar-bottom">
+      <button id="logoutBtn" class="navbtn">Sign out</button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div><h1 id="pageTitle">Dashboard</h1><div class="muted" id="adminName">Event management overview</div></div>
+      <button class="btn btn-primary" onclick="openEventModal()">+ Create event</button>
+    </div>
+
+    <section id="dashboardPage">
+      <div class="stats" id="statsGrid"></div>
+      <div class="panel">
+        <div class="toolbar"><div><h3>Recent events</h3><div class="muted">Quick view of your latest events.</div></div></div>
+        <div class="grid" id="recentEvents"></div>
+      </div>
+    </section>
+
+    <section id="eventsPage" class="hidden">
+      <div class="panel">
+        <div class="toolbar">
+          <input id="eventSearch" class="search" placeholder="Search events...">
+          <button class="btn btn-primary" onclick="openEventModal()">+ Create event</button>
+        </div>
+        <div class="grid" id="eventGrid"></div>
+      </div>
+    </section>
+
+    <section id="attendeesPage" class="hidden">
+      <div class="panel">
+        <div class="toolbar">
+          <select id="eventSelect" style="max-width:340px"></select>
+          <div class="actions">
+            <input id="attendeeSearch" class="search" placeholder="Search attendee...">
+            <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Registered</th></tr></thead>
+            <tbody id="attendeeRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="reportsPage" class="hidden">
+      <div class="stats" id="reportStats"></div>
+
+      <div class="panel">
+        <div class="toolbar">
+          <div>
+            <h3>Event performance report</h3>
+            <div class="muted">Registration, capacity and attendance overview for every event.</div>
+          </div>
+          <div class="actions">
+            <select id="reportStatusFilter" style="width:auto;min-width:150px">
+              <option value="all">All statuses</option>
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <button class="btn btn-secondary" onclick="exportEventReport()">Export report CSV</button>
+            <button class="btn btn-secondary" onclick="window.print()">Print report</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Event</th><th>Status</th><th>Date</th><th>Capacity</th>
+                <th>Registered</th><th>Remaining</th><th>Occupancy</th>
+              </tr>
+            </thead>
+            <tbody id="reportRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="eventModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="modalTitle">Create event</h3><button class="close" onclick="closeEventModal()">×</button></div>
+    <form id="eventForm" class="form-grid">
+      <input type="hidden" id="eventId">
+      <div class="field full"><label>Title</label><input id="title" required></div>
+      <div class="field full"><label>Description</label><textarea id="description"></textarea></div>
+      <div class="field"><label>Starts at</label><input id="startsAt" type="datetime-local" required></div>
+      <div class="field"><label>Ends at</label><input id="endsAt" type="datetime-local"></div>
+      <div class="field"><label>Location</label><input id="location" required></div>
+      <div class="field"><label>Capacity</label><input id="capacity" type="number" min="1" required></div>
+      <div class="field full"><label>Status</label><select id="status">
+        <option value="draft">Draft</option><option value="published">Published</option>
+        <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+      </select></div>
+      <div class="field full"><button class="btn btn-primary">Save event</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+  let user=null, profile=null, events=[], attendees=[], reportSummary=null;
+
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
+  const fmt=v=>new Date(v).toLocaleString([], {dateStyle:"medium",timeStyle:"short"});
+  const localInput=v=>v?new Date(new Date(v).getTime()-new Date(v).getTimezoneOffset()*60000).toISOString().slice(0,16):"";
+
+  async function api(path, options={}, retry=true){
+    const config={...options,credentials:"same-origin"};
+    config.headers={"Content-Type":"application/json",...(options.headers||{})};
+    let response=await fetch(path,config);
+    if(response.status===401 && retry && !path.startsWith("/api/auth/")){
+      const refresh=await fetch("/api/auth/refresh",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"}});
+      if(refresh.ok)return api(path,options,false);
+    }
+    let body=null; try{body=await response.json()}catch(_){ }
+    if(!response.ok)throw new Error(body?.detail||body?.message||"Request failed");
+    return body;
+  }
+
+  function toast(msg,error=false){
+    const el=$("toast"); el.textContent=msg; el.className="toast"+(error?" error":"");
+    el.classList.remove("hidden"); setTimeout(()=>el.classList.add("hidden"),3000);
+  }
+
+  async function getSession(){
+    try{return await api("/api/auth/session",{},false)}catch(_){
+      try{await api("/api/auth/refresh",{method:"POST"},false);return await api("/api/auth/session",{},false)}catch(_){return null}
+    }
+  }
+
+  async function checkSession(){
+    const data=await getSession();
+    if(!data)return;
+    user=data.user; profile=data.profile;
+    if(profile?.role!=="admin"){
+      await api("/api/auth/logout",{method:"POST"},false).catch(()=>{});
+      user=null; profile=null; return toast("This account is not an admin.",true);
+    }
+    showAdmin();
+  }
+
+  $("loginForm").onsubmit=async e=>{
+    e.preventDefault();
+    try{
+      await api("/api/auth/login",{method:"POST",body:JSON.stringify({
+        email:$("loginEmail").value.trim(),password:$("loginPassword").value
+      })},false);
+      const data=await api("/api/auth/session",{},false);
+      user=data.user; profile=data.profile;
+      if(profile?.role!=="admin"){
+        await api("/api/auth/logout",{method:"POST"},false).catch(()=>{});
+        user=null;profile=null;return toast("Admin access required.",true);
+      }
+      showAdmin();
+    }catch(error){ toast(error.message,true); }
+  };
+
+  function showAdmin(){
+    $("loginView").classList.add("hidden"); $("adminApp").classList.remove("hidden");
+    $("adminName").textContent=profile?.full_name?`Welcome, ${profile.full_name}`:"Event management overview";
+    loadAll();
+  }
+
+  $("logoutBtn").onclick=async()=>{await api("/api/auth/logout",{method:"POST"},false).catch(()=>{});location.reload()};
+
+  document.querySelectorAll(".navbtn[data-page]").forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll(".navbtn[data-page]").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      ["dashboardPage","eventsPage","attendeesPage","reportsPage"].forEach(id=>$(id).classList.add("hidden"));
+      const p=btn.dataset.page;
+      $(p+"Page").classList.remove("hidden");
+      $("pageTitle").textContent=p.charAt(0).toUpperCase()+p.slice(1);
+      if(p==="attendees")loadAttendees();
+      if(p==="reports")loadReports();
+    };
+  });
+
+  async function loadAll(){ await Promise.all([loadStats(),loadEvents()]); }
+
+  async function loadStats(){
+    try{
+      const data=await api("/api/admin/stats"); const d=data?.[0]??{};
+      const stats=[["Total events",d.total_events??0],["Published",d.published_events??0],["Registrations",d.active_registrations??0],["Remaining seats",d.remaining_capacity??0]];
+      $("statsGrid").innerHTML=stats.map(([k,v])=>`<div class="stat"><span>${k}</span><strong>${v}</strong></div>`).join("");
+    }catch(error){toast(error.message,true)}
+  }
+
+  async function loadEvents(){
+    try{events=(await api("/api/admin/events"))??[];renderEvents();renderRecent();fillSelect()}
+    catch(error){toast(error.message,true)}
+  }
+
+  function card(e){
+    return `<div class="card">
+      <span class="badge ${e.status}">${esc(e.status)}</span>
+      <h3 style="margin-top:10px">${esc(e.title)}</h3>
+      <div class="meta"><span>📍 ${esc(e.location)}</span><span>🗓 ${fmt(e.starts_at)}</span><span>👥 ${e.registered_count??0}/${e.capacity} registered</span></div>
+      <div class="actions"><button class="btn btn-primary" onclick="editEvent('${e.id}')">Edit</button></div>
+    </div>`;
+  }
+
+  function renderEvents(){
+    const q=$("eventSearch").value.toLowerCase();
+    const list=events.filter(e=>(e.title+" "+e.location).toLowerCase().includes(q));
+    $("eventGrid").innerHTML=list.length?list.map(card).join(""):`<div class="muted">No events found.</div>`;
+  }
+  $("eventSearch").oninput=renderEvents;
+
+  function renderRecent(){ $("recentEvents").innerHTML=events.slice(0,3).map(card).join("")||`<div class="muted">No events yet.</div>`; }
+  function fillSelect(){ $("eventSelect").innerHTML=events.map(e=>`<option value="${e.id}">${esc(e.title)}</option>`).join(""); }
+  $("eventSelect").onchange=loadAttendees;
+
+  async function loadAttendees(){
+    const id=$("eventSelect").value;
+    if(!id){attendees=[];renderAttendees();return}
+    try{attendees=(await api(`/api/admin/events/${id}/attendees`))??[];renderAttendees()}
+    catch(error){toast(error.message,true)}
+  }
+
+  function renderAttendees(){
+    const q=$("attendeeSearch").value.toLowerCase();
+    const list=attendees.filter(a=>(a.full_name+" "+a.email).toLowerCase().includes(q));
+    $("attendeeRows").innerHTML=list.length?list.map(a=>`<tr>
+      <td>${esc(a.full_name||"—")}</td><td>${esc(a.email||"—")}</td>
+      <td><span class="badge">${esc(a.registration_status)}</span></td><td>${fmt(a.registered_at)}</td>
+    </tr>`).join(""):`<tr><td colspan="4" class="muted">No attendees found.</td></tr>`;
+  }
+  $("attendeeSearch").oninput=renderAttendees;
+
+  async function loadReports(){
+    try{
+      reportSummary=await api("/api/admin/reports/summary");
+      if(Array.isArray(reportSummary.events))events=reportSummary.events;
+      const totalCapacity=Number(reportSummary.total_capacity)||0;
+      const active=Number(reportSummary.active_registrations)||0;
+      const cancelled=Number(reportSummary.cancelled_registrations)||0;
+      const occupancy=totalCapacity?Math.round((active/totalCapacity)*100):0;
+      const stats=[["Total capacity",totalCapacity],["Active registrations",active],["Cancelled registrations",cancelled],["Overall occupancy",occupancy+"%"]];
+      $("reportStats").innerHTML=stats.map(([k,v])=>`<div class="stat"><span>${k}</span><strong>${v}</strong></div>`).join("");
+      renderReportRows();
+    }catch(error){toast(error.message,true)}
+  }
+
+  function reportFilteredEvents(){const status=$("reportStatusFilter").value;return status==="all"?events:events.filter(e=>e.status===status)}
+  function renderReportRows(){
+    const list=reportFilteredEvents();
+    $("reportRows").innerHTML=list.length?list.map(e=>{
+      const registered=Number(e.registered_count)||0,capacity=Number(e.capacity)||0,remaining=Math.max(capacity-registered,0),occupancy=capacity?Math.round((registered/capacity)*100):0;
+      return `<tr><td>${esc(e.title)}</td><td><span class="badge ${e.status}">${esc(e.status)}</span></td><td>${fmt(e.starts_at)}</td><td>${capacity}</td><td>${registered}</td><td>${remaining}</td><td>${occupancy}%</td></tr>`;
+    }).join(""):`<tr><td colspan="7" class="muted">No events found for this filter.</td></tr>`;
+  }
+  $("reportStatusFilter").onchange=renderReportRows;
+
+  window.exportEventReport=()=>{
+    const list=reportFilteredEvents();if(!list.length)return toast("No report data to export.",true);
+    const rows=[["Event","Status","Date","Location","Capacity","Registered","Remaining","Occupancy %"]];
+    for(const e of list){const registered=Number(e.registered_count)||0,capacity=Number(e.capacity)||0,remaining=Math.max(capacity-registered,0),occupancy=capacity?Math.round((registered/capacity)*100):0;rows.push([e.title,e.status,e.starts_at,e.location,capacity,registered,remaining,occupancy])}
+    const csv=rows.map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");
+    const blob=new Blob([csv],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="nowshera-events-report.csv";a.click();URL.revokeObjectURL(url);
+  };
+
+  window.openEventModal=()=>{$("eventForm").reset();$("eventId").value="";$("status").value="draft";$("modalTitle").textContent="Create event";$("eventModal").classList.remove("hidden")};
+  window.closeEventModal=()=>$("eventModal").classList.add("hidden");
+  window.editEvent=id=>{const e=events.find(x=>x.id===id);if(!e)return;$("eventId").value=e.id;$("title").value=e.title;$("description").value=e.description??"";$("startsAt").value=localInput(e.starts_at);$("endsAt").value=localInput(e.ends_at);$("location").value=e.location;$("capacity").value=e.capacity;$("status").value=e.status;$("modalTitle").textContent="Edit event";$("eventModal").classList.remove("hidden")};
+
+  $("eventForm").onsubmit=async e=>{
+    e.preventDefault();const id=$("eventId").value;
+    const payload={title:$("title").value.trim(),description:$("description").value.trim(),starts_at:new Date($("startsAt").value).toISOString(),ends_at:$("endsAt").value?new Date($("endsAt").value).toISOString():null,location:$("location").value.trim(),capacity:Number($("capacity").value),status:$("status").value};
+    try{if(id)await api(`/api/admin/events/${id}`,{method:"PATCH",body:JSON.stringify(payload)});else await api("/api/admin/events",{method:"POST",body:JSON.stringify(payload)});closeEventModal();toast(id?"Event updated.":"Event created.");await loadAll()}
+    catch(error){toast(error.message,true)}
+  };
+
+  window.exportCSV=()=>{if(!attendees.length)return toast("No attendees to export.",true);const rows=[["Name","Email","Status","Registered At"],...attendees.map(a=>[a.full_name,a.email,a.registration_status,a.registered_at])];const csv=rows.map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="attendees.csv";a.click();URL.revokeObjectURL(url)};
+
+  checkSession();
+  setInterval(()=>{if(!$("adminApp").classList.contains("hidden"))loadAll()},20000);
+</script>
+</body>
+</html>
